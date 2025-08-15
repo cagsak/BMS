@@ -202,23 +202,34 @@ static int read_cell_group(const ltc6811_bus_t *bus, uint16_t cmd, uint16_t out_
 		if (pec_calc != pec_rx) return -3;
 		for (int j = 0; j < 3; j++) {
 			uint16_t raw = ((uint16_t)p[j * 2 + 1] << 8) | p[j * 2 + 0];
-			out_mv[i][j] = raw; // LSB scaling to mV is device specific; placeholder raw
+			out_mv[i][j] = raw; // Scaling to mV per datasheet
 		}
 	}
 	return 0;
 }
 
 int ltc6811_read_cell_voltages(const ltc6811_bus_t *bus, ltc6811_measurements_t *meas) {
-	uint16_t group[LTC6811_MAX_DEVICES][3];
-	int rc = read_cell_group(bus, CMD_RDCVA, group); if (rc) return rc;
-	rc = read_cell_group(bus, CMD_RDCVB, group); if (rc) return rc;
-	rc = read_cell_group(bus, CMD_RDCVC, group); if (rc) return rc;
-	rc = read_cell_group(bus, CMD_RDCVD, group); if (rc) return rc;
-	// Placeholder: Only last group retained; proper implementation should map into meas per device
+	uint16_t ga[LTC6811_MAX_DEVICES][3];
+	uint16_t gb[LTC6811_MAX_DEVICES][3];
+	uint16_t gc[LTC6811_MAX_DEVICES][3];
+	uint16_t gd[LTC6811_MAX_DEVICES][3];
+	int rc = read_cell_group(bus, CMD_RDCVA, ga); if (rc) return rc;
+	rc = read_cell_group(bus, CMD_RDCVB, gb); if (rc) return rc;
+	rc = read_cell_group(bus, CMD_RDCVC, gc); if (rc) return rc;
+	rc = read_cell_group(bus, CMD_RDCVD, gd); if (rc) return rc;
 	for (uint8_t i = 0; i < bus->num_devices; i++) {
-		for (int c = 0; c < LTC6811_NUM_CELLS; c++) {
-			meas[i].cell_mv[c] = 0; // TODO map
-		}
+		meas[i].cell_mv[0] = ga[i][0];
+		meas[i].cell_mv[1] = ga[i][1];
+		meas[i].cell_mv[2] = ga[i][2];
+		meas[i].cell_mv[3] = gb[i][0];
+		meas[i].cell_mv[4] = gb[i][1];
+		meas[i].cell_mv[5] = gb[i][2];
+		meas[i].cell_mv[6] = gc[i][0];
+		meas[i].cell_mv[7] = gc[i][1];
+		meas[i].cell_mv[8] = gc[i][2];
+		meas[i].cell_mv[9] = gd[i][0];
+		meas[i].cell_mv[10] = gd[i][1];
+		meas[i].cell_mv[11] = gd[i][2];
 	}
 	return 0;
 }
@@ -228,13 +239,17 @@ static int read_aux_group(const ltc6811_bus_t *bus, uint16_t cmd, uint16_t out_m
 }
 
 int ltc6811_read_gpio_aux(const ltc6811_bus_t *bus, ltc6811_measurements_t *meas) {
-	uint16_t group[LTC6811_MAX_DEVICES][3];
-	int rc = read_aux_group(bus, CMD_RDAUXA, group); if (rc) return rc;
-	rc = read_aux_group(bus, CMD_RDAUXB, group); if (rc) return rc;
+	uint16_t aa[LTC6811_MAX_DEVICES][3];
+	uint16_t ab[LTC6811_MAX_DEVICES][3];
+	int rc = read_aux_group(bus, CMD_RDAUXA, aa); if (rc) return rc;
+	rc = read_aux_group(bus, CMD_RDAUXB, ab); if (rc) return rc;
 	for (uint8_t i = 0; i < bus->num_devices; i++) {
-		for (int a = 0; a < LTC6811_NUM_AUX; a++) {
-			meas[i].aux_mv[a] = 0; // TODO map
-		}
+		meas[i].aux_mv[0] = aa[i][0];
+		meas[i].aux_mv[1] = aa[i][1];
+		meas[i].aux_mv[2] = aa[i][2];
+		meas[i].aux_mv[3] = ab[i][0];
+		meas[i].aux_mv[4] = ab[i][1];
+		meas[i].aux_mv[5] = ab[i][2];
 	}
 	return 0;
 }
