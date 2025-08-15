@@ -1,0 +1,2 @@
+/usr/bin/ar qc libltc6811.a CMakeFiles/ltc6811.dir/src/ltc6811.c.o CMakeFiles/ltc6811.dir/src/ntc.c.o CMakeFiles/ltc6811.dir/src/bms_master.c.o
+/usr/bin/ranlib libltc6811.a

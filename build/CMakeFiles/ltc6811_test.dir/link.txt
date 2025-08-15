@@ -1,0 +1,1 @@
+/usr/bin/cc -Xlinker --dependency-file=CMakeFiles/ltc6811_test.dir/link.d CMakeFiles/ltc6811_test.dir/tests/main.c.o CMakeFiles/ltc6811_test.dir/src/mock_hal.c.o -o ltc6811_test  libltc6811.a -lm

@@ -27,7 +27,7 @@ int bms_master_sample_temperatures(const bms_master_t *m, int16_t temps_c10[BMS_
 	for (uint8_t s = 0; s < m->num_slaves; s++) {
 		for (int i = 0; i < BMS_NTC_PER_SLAVE; i++) {
 			uint16_t v_mv = aux_raw[s].aux_mv[i];
-			tps_c10[s][i] = ntc_mv_to_c10(v_mv, &m->slave_params[s].ntc_params[i]);
+			temps_c10[s][i] = ntc_mv_to_c10(v_mv, &m->slave_params[s].ntc_params[i]);
 		}
 	}
 	return 0;
